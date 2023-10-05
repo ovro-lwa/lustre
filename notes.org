@@ -1,0 +1,37 @@
+* Install lustre repo config file
+cp lustre.repo in this repo to  /etc/yum.repos.d/
+then enable:
+: yum-config-manager --enable \*
+Then yum update
+: yum update
+* MDS SW install
+** create md array. this was alrady done.
+: [ubuntu@lwastormds ~]$ cat /proc/mdstat 
+: Personalities : [raid10] 
+: md127 : active raid10 nvme5n1p1[5] nvme2n1p1[2] nvme4n1p1[4] nvme0n1p1[0] nvme3n1p1[3] nvme1n1p1[1]
+:       9376450560 blocks super 1.2 512K chunks 2 near-copies [6/6] [UUUUUU]
+:       bitmap: 0/70 pages [0KB], 65536KB chunk
+: 
+: unused devices: <none>
+** Install kmod on MDS using above repos
+: sudo yum install kmod-lustre-osd-ldiskfs lustre lustre-osd-ldiskfs-mount
+This resulted in a kernel version change, so reboot afterwards
+then install modules
+: sudo modprobe lustre
+: sudo modprobe ldiskfs
+** make filesystem on /dev/md127
+: sudo mkfs.lustre --reformat --mdt --mgs --backfstype=ldiskfs --fsname=lstore --mgsnode=10.41.0.86 --index=0 /dev/md127
+** mount it
+: sudo mkdir /metastor
+: sudo mount -t lustre /dev/md127 /metastor
+** Finish configuring the MDS
+* Install lustre on OSS's with ZFS support
+Use the same repo definition, the install the zfs modules
+: sudo yum install kmod-lustre-osd-zfs lustre lustre-osd-zfs-mount e2fsprogs e2fsprogs-libs
+: sudo modprobe lustre
+: sudo modprobe zfs
+** make vdevs using zpool create
+** make filesystem on vdev
+: sudo mkfs.lustre --reformat --ost --backfstype=zfs --fsname=mylustre --mgsnode=10.41.0.86 --index=1 lwastor01b/ost
+** Mount filesystem
+: sudo mount -t lustre lwastor01b/ost /mnt/lustre/lustre-ost01b/
