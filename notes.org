@@ -59,3 +59,10 @@ the hostname is of the form: lwastorXX which they are.
 The service mount points are actually: /mnt/lustre/local/<mountpoint> which
 it somehow creates. When it's all working, these mounts come back after a
 reboot.
+* lwastor07 osd-zfs missing symbols
+fixed. the zfs repo definition file was moved out of the way from a previous
+yum update. I moved it back(/etc/yum.repos.d/zfs.repo and did an update
+of the zfs and zfs-dkms packages. zfs dkms build fine and I rebuilt
+the lustre-zfs dkms module(after fixing up the conf file. see scripts).
+It built w/out error. I then reformatted the lustre filesystems on the
+vdevs and mounted them. 
