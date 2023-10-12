@@ -1,6 +1,16 @@
+* Scripts
+The scripts in this repo: lustreOSSinstall.sh and lustreOSSpostRebootInstall.sh
+attempt to automate the install. Very hacky. Not 100%. Sometimes, installing
+the lustre packages will result in a clean dkms module and other times it
+doesn't. There's a fix to remove a warning when the lustre module is installed
+(See script which modifies a config file then rebuilds the module). There
+are two scripts because I found a reboot helps, so run lustreOSSinstall.sh
+first which ends in a reboot then run the second script. lwastor07 still
+isn't building the modules correctly. Some missing dependencies when trying
+to load osd-zfs mount module. Go figure.
 * Install lustre repo config file
 cp lustre.repo in this repo to  /etc/yum.repos.d/
-then enable:
+then enable(don't think the update is needed):
 : yum-config-manager --enable \*
 Then yum update
 : yum update
@@ -26,12 +36,26 @@ then install modules
 : sudo mount -t lustre /dev/md127 /metastor
 ** Finish configuring the MDS
 * Install lustre on OSS's with ZFS support
-Use the same repo definition, the install the zfs modules
+Use the same repo definition, then install the zfs modules
 : sudo yum install kmod-lustre-osd-zfs lustre lustre-osd-zfs-mount e2fsprogs e2fsprogs-libs
 : sudo modprobe lustre
 : sudo modprobe zfs
+The above works some of the time. Not sure why. the lustre*sh scripts attempt
+to do what is necessary but seems to be really hacky. Fiddling seems to be
+needed and some reboots are necessary likely because I'm unaware of command
+line programs.
 ** make vdevs using zpool create
 ** make filesystem on vdev
-: sudo mkfs.lustre --reformat --ost --backfstype=zfs --fsname=mylustre --mgsnode=10.41.0.86 --index=1 lwastor01b/ost
+Note, all OST's to my knowledge need the same fsname for it to be added to
+the entire storage allocation seen by the client. May be other ways to do
+this. Also, the index number is used to create the fsname-OSTnnnn label
+when has to be unique. nnnn is in hex. The script ensures this as long as
+the hostname is of the form: lwastorXX which they are.
+: sudo mkfs.lustre --reformat --ost --backfstype=zfs --fsname=lstore --mgsnode=10.41.0.86 --index=2 lwastor01b/ost
 ** Mount filesystem
 : sudo mount -t lustre lwastor01b/ost /mnt/lustre/lustre-ost01b/
+** Enable lustre service
+: sudo systemctl enable lustre
+The service mount points are actually: /mnt/lustre/local/<mountpoint> which
+it somehow creates. When it's all working, these mounts come back after a
+reboot.
