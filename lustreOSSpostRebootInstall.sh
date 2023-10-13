@@ -67,6 +67,9 @@ function makefs {
     # lwastorXY. ib should then equal Y
     ib=`echo $hn | cut -c 9`
     i=$(( $ib*3 - 3 ))
+    if [[ -e /tmp/ldev.conf ]]; then
+       sudo rm -f /tmp/ldev.conf
+    fi
     for p in $p0 $p1 $p2; do
 	sudo zpool list $p > /dev/null 2>&1
 	sudo mkdir -p /mnt/lustre/$p
@@ -77,9 +80,6 @@ function makefs {
       fi
       echo "making lustre fs on $p/ost..."
       sudo mkfs.lustre --reformat --ost --backfstype=zfs --fsname=lstore --mgsnode=10.41.0.86 --index=$i $p/ost
-      if [[ -e /tmp/ldev.conf ]]; then
-	  sudo rm -f /tmp/ldev.conf
-      fi
       ostname=`printf 'lstore-OST%4.4x\n' $i`
       echo "$hn - $ostname zfs:$p/ost" >> /tmp/ldev.conf
       sudo mount -t lustre $p/ost /mnt/lustre/$p
