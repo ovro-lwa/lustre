@@ -5,7 +5,7 @@ As of kernel version
 make sure I have the right kernel headers etc.
 
 ```
-dnf install kernel-$VER kernel-devel-$VER kernel-headers-$VER kernel-abi-whitelists-$VER kernel-tools-$VER kernel-tools-libs-$VER kernel-tools-libs-devel-$VER
+dnf install kernel-$VER kernel-devel-$VER kernel-headers-$VER kernel-tools-$VER kernel-tools-libs-$VER kernel-tools-libs-devel-$VER
 ```
 
 ```
