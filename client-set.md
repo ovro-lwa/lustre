@@ -1,6 +1,6 @@
 As of kernel version
 
-```export VER=4.18.0-477.21.1.el8```
+```export VER=4.18.0-477.21.1.el8_8```
 
 make sure I have the right kernel headers etc.
 
