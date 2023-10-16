@@ -22,6 +22,10 @@ baseurl=https://downloads.whamcloud.com/public/lustre/latest-release/el8.8/clien
 gpgcheck=0
 enable=0
 ```
+Install
+```
+sudo dnf --enablerepo=lustre-client install lustre-client-dkms lustre-client
+```
 
 LNet
 
