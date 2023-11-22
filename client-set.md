@@ -27,6 +27,11 @@ Install
 sudo dnf --enablerepo=lustre-client install lustre-client-dkms lustre-client
 ```
 
+And then edit `/etc/fstab` to add
+```
+10.41.0.86@tcp:/lstore /lustre lustre defaults,_netdev,noauto,x-systemd.automount 0 0
+```
+
 LNet
 
 ```
